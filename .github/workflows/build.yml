@@ -2,10 +2,9 @@ name: Build image and push
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "aqua-container-scanner" ]
   pull_request:
-    branches: [ "main" ]
-
+    branches: [ "main", "aqua-container-scanner" ]
 
 jobs:
 

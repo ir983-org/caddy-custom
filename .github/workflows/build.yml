@@ -22,5 +22,8 @@ jobs:
     - name: Tag image with Registry
       run: docker tag my-demo-image:${{ github.sha }} my-registry/my-demo-image:${{ github.sha }}
 
+    - name: Aqua SaaS Container Scanner
+      run: docker run -v /var/run/docker.sock:/var/run/docker.sock registry.aquasec.com/scanner:latest-saas scan -H https://cloud-dev.aquasec.com -A $AQUA_SCANNER_TOKEN --local my-registry/my-demo-image:${{ github.sha }}
+
     - name: Push to Registry
       run: echo "docker push my-registry/my-demo-image:${{ github.sha }}"

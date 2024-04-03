@@ -23,15 +23,15 @@ jobs:
         password: ${{ secrets.AQUA_REGISTRY_TOKEN }}
           
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag my-demo-image:${{ github.sha }}
+      run: docker build . --file Dockerfile --tag caddy-custom:${{ github.sha }}
 
     - name: Tag image with Registry
-      run: docker tag my-demo-image:${{ github.sha }} my-registry/my-demo-image:${{ github.sha }}
+      run: docker tag caddy-custom:${{ github.sha }} ghcr.io/ir983-org/caddy-custom:${{ github.sha }}
 
     - name: Aqua SaaS Container Scanner
       env:
         AQUA_SCANNER_TOKEN: ${{ secrets.AQUA_SCANNER_TOKEN }}
-      run: docker run -v /var/run/docker.sock:/var/run/docker.sock registry.aquasec.com/scanner:latest-saas scan -H https://cloud-dev.aquasec.com -A $AQUA_SCANNER_TOKEN --local my-registry/my-demo-image:${{ github.sha }}
+      run: docker run -v /var/run/docker.sock:/var/run/docker.sock registry.aquasec.com/scanner:latest-saas scan -H https://cloud-dev.aquasec.com -A $AQUA_SCANNER_TOKEN --local ghcr.io/ir983-org/caddy-custom:${{ github.sha }}
 
     - name: Push to Registry
-      run: echo "docker push my-registry/my-demo-image:${{ github.sha }}"
+      run: echo "docker push ghcr.io/ir983-org/caddy-custom:${{ github.sha }}"

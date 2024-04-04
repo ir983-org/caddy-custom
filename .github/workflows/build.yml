@@ -31,7 +31,7 @@ jobs:
     - name: Aqua SaaS Container Scanner
       env:
         AQUA_SCANNER_TOKEN: ${{ secrets.AQUA_SCANNER_TOKEN }}
-      run: docker run -v /var/run/docker.sock:/var/run/docker.sock registry.aquasec.com/scanner:latest-saas scan -H https://cloud-dev.aquasec.com -A $AQUA_SCANNER_TOKEN --local ghcr.io/ir983-org/caddy-custom:${{ github.sha }}
+      run: docker run -v /var/run/docker.sock:/var/run/docker.sock registry.aquasec.com/scanner:latest-saas scan -H $AQUA_SCANNER_URL -A $AQUA_SCANNER_TOKEN --local ghcr.io/ir983-org/caddy-custom:${{ github.sha }}
 
     - name: Push to Registry
       run: echo "docker push ghcr.io/ir983-org/caddy-custom:${{ github.sha }}"

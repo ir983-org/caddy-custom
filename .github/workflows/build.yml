@@ -2,10 +2,9 @@ name: Build image and push
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "aqua-scanner-cli" ]
   pull_request:
-    branches: [ "main" ]
-
+    branches: [ "main", "aqua-scanner-cli" ]
 
 jobs:
 
@@ -15,12 +14,26 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-
+    
+    - name: Pull Aqua Scanner CLI
+      env:
+        AQUA_REGISTRY_USERNAME: ${{ secrets.AQUA_REGISTRY_USERNAME }}
+        AQUA_REGISTRY_TOKEN: ${{ secrets.AQUA_REGISTRY_TOKEN }}
+      run: |
+        wget --user $AQUA_REGISTRY_USERNAME --password $AQUA_REGISTRY_TOKEN https://download.aquasec.com/scanner/2403.2.15/scannercli
+        chmod +x ./scannercli
+          
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag my-demo-image:${{ github.sha }}
+      run: docker build . --file Dockerfile --tag caddy-custom:${{ github.sha }}
 
     - name: Tag image with Registry
-      run: docker tag my-demo-image:${{ github.sha }} my-registry/my-demo-image:${{ github.sha }}
+      run: docker tag caddy-custom:${{ github.sha }} ghcr.io/ir983-org/caddy-custom:${{ github.sha }}
+
+    - name: Aqua Scanner CLI
+      env:
+        AQUA_SCANNER_TOKEN: ${{ secrets.AQUA_SCANNER_TOKEN }}
+        AQUA_SCANNER_URL: ${{ secrets.AQUA_SCANNER_URL }}
+      run: ./scannercli scan -A $AQUA_SCANNER_TOKEN -H $AQUA_SCANNER_URL --local ghcr.io/ir983-org/caddy-custom:${{ github.sha }}
 
     - name: Push to Registry
-      run: echo "docker push my-registry/my-demo-image:${{ github.sha }}"
+      run: echo "docker push ghcr.io/ir983-org/caddy-custom:${{ github.sha }}"
